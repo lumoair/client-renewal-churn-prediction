@@ -51,7 +51,7 @@ const server = createServer((req, res) => {
         const chatMessages = [systemMessage, ...messages];
 
         if (apiKey) {
-          doProviderChat(chatMessages, model || "gpt-4o-mini", apiKey, apiBaseUrl || "https://api.openai.com/v1", res);
+          await doProviderChat(chatMessages, model || "gpt-4o-mini", apiKey, apiBaseUrl || "https://api.openai.com/v1", res);
         } else {
           await doOllamaChat(chatMessages, res);
         }
@@ -216,53 +216,61 @@ async function doOllamaChat(messages, res) {
   }
 }
 
-function doProviderChat(messages, model, apiKey, apiBaseUrl, res) {
-  const urlObj = new URL(apiBaseUrl);
-  const payload = {
-    model,
-    messages,
-    max_tokens: 1024,
-  };
+function providerRequest(messages, model, apiKey, apiBaseUrl) {
+  return new Promise((resolve, reject) => {
+    const urlObj = new URL(apiBaseUrl);
+    const payload = { model, messages, max_tokens: 1024 };
 
-  const options = {
-    hostname: urlObj.hostname,
-    port: urlObj.port || (urlObj.protocol === "https:" ? 443 : 80),
-    path: (urlObj.pathname === "/" ? "" : urlObj.pathname.replace(/\/$/, "")) + "/chat/completions",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`,
-    },
-  };
+    const options = {
+      hostname: urlObj.hostname,
+      port: urlObj.port || (urlObj.protocol === "https:" ? 443 : 80),
+      path: (urlObj.pathname === "/" ? "" : urlObj.pathname.replace(/\/$/, "")) + "/chat/completions",
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
+    };
 
-  const mod = urlObj.protocol === "https:" ? httpsRequest : httpRequest;
-  const req = mod(options, resp => {
-    let data = "";
-    resp.on("data", chunk => data += chunk);
-    resp.on("end", () => {
-      try {
-        const parsed = JSON.parse(data);
-        if (!resp.statusCode || resp.statusCode >= 400) {
-          const errMsg = parsed.error?.message || parsed.error || `HTTP ${resp.statusCode}`;
-          res.writeHead(502, {"Content-Type": "application/json"});
-          res.end(JSON.stringify({reply: `API error: ${errMsg}`}));
-          return;
+    const mod = urlObj.protocol === "https:" ? httpsRequest : httpRequest;
+    const req = mod(options, resp => {
+      let data = "";
+      resp.on("data", chunk => data += chunk);
+      resp.on("end", () => {
+        try {
+          const parsed = JSON.parse(data);
+          resolve({ status: resp.statusCode, body: parsed });
+        } catch {
+          reject(new Error("Failed to parse provider response."));
         }
-        const content = parsed.choices?.[0]?.message?.content || "";
-        res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(JSON.stringify({reply: content || "No response from provider."}));
-      } catch {
-        res.writeHead(502, {"Content-Type": "application/json"});
-        res.end(JSON.stringify({reply: "Failed to parse provider response."}));
-      }
+      });
     });
+    req.on("error", err => reject(err));
+    req.write(JSON.stringify(payload));
+    req.end();
   });
-  req.on("error", (err) => {
+}
+
+async function doProviderChat(messages, model, apiKey, apiBaseUrl, res, attempt) {
+  if (attempt === undefined) attempt = 0;
+  try {
+    const {status, body} = await providerRequest(messages, model, apiKey, apiBaseUrl);
+    if (status >= 400) {
+      const errMsg = body.error?.message || body.error || `HTTP ${status}`;
+      if (status === 429 && attempt < 3) {
+        const delay = (attempt + 1) * 2000;
+        await new Promise(r => setTimeout(r, delay));
+        return doProviderChat(messages, model, apiKey, apiBaseUrl, res, attempt + 1);
+      }
+      res.writeHead(502, {"Content-Type": "application/json"});
+      const hint = status === 429 ? "Rate limited by the provider. Try a different model or wait a moment." : "";
+      res.end(JSON.stringify({reply: `API error: ${errMsg}. ${hint}`.trim()}));
+      return;
+    }
+    const content = body.choices?.[0]?.message?.content || "";
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify({reply: content || "No response from provider."}));
+  } catch (err) {
     res.writeHead(502, {"Content-Type": "application/json"});
-    res.end(JSON.stringify({reply: `Cannot reach the API provider: ${err.message}. Check your API URL and key.`}));
-  });
-  req.write(JSON.stringify(payload));
-  req.end();
+    res.end(JSON.stringify({reply: `Provider error: ${err.message}`}));
+  }
 }
 
 const PORT = process.env.PORT || 8000;
