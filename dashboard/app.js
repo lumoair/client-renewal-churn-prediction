@@ -279,9 +279,6 @@ function applyLang() {
   const toggle = document.getElementById("langToggle");
   if (toggle) toggle.textContent = t("toggleLang");
 
-  const brandMark = document.getElementById("brandMark");
-  if (brandMark) brandMark.textContent = currentLang === "ar" ? "ر" : "R";
-
   localStorage.setItem(LOCALE_KEY, currentLang);
 }
 
@@ -591,7 +588,6 @@ function colorForSegment(segment) {
     default:
       return "#555555";
   }
-}
 }
 
 function renderTable(rows) {
