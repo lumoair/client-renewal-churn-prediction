@@ -21,6 +21,7 @@ const MIME_TYPES = {
 
 const server = createServer((req, res) => {
   let url = req.url.split("?")[0];
+  console.error("Request:", req.method, url);
 
   if (req.method === "POST" && url === "/api/chat") {
     let body = "";
@@ -71,7 +72,8 @@ const server = createServer((req, res) => {
   }
 
   if (!existsSync(filePath)) {
-    res.writeHead(404);
+    console.error("404 NOT FOUND:", filePath);
+    res.writeHead(404, {"Content-Type": "text/plain"});
     res.end("Not Found");
     return;
   }
@@ -216,6 +218,9 @@ async function doOllamaChat(messages, res) {
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.PORT ? "0.0.0.0" : "127.0.0.1";
 
+console.error("Starting server with root:", root);
+console.error("Dashboard exists at:", join(root, "dashboard", "index.html"), existsSync(join(root, "dashboard", "index.html")));
+
 server.listen(PORT, HOST, () => {
-  console.log(`Serving dashboard at http://${HOST}:${PORT}/dashboard/`);
+  console.error(`Serving dashboard at http://${HOST}:${PORT}/dashboard/`);
 });
