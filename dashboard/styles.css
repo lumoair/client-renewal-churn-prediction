@@ -1293,7 +1293,30 @@ body.sidebar-collapsed .brand-mark {
     bottom: 80px;
   }
 
-  .chat-toggle {
+.claude-fab {
+  position: fixed;
+  bottom: 88px;
+  right: 24px;
+  z-index: 100;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: #DE7356;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(222, 115, 86, 0.25);
+  transition: transform 0.2s var(--anim-ease), box-shadow 0.2s var(--anim-ease);
+}
+
+.claude-fab:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(222, 115, 86, 0.35);
+}
+
+.chat-toggle {
     bottom: 16px;
     right: 16px;
   }
