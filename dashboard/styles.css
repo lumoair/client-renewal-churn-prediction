@@ -1297,13 +1297,15 @@ body.sidebar-collapsed .brand-mark {
   position: fixed;
   bottom: 88px;
   right: 24px;
-  z-index: 100;
+  z-index: 101;
   width: 52px;
   height: 52px;
   border-radius: 50%;
   border: none;
   background: #DE7356;
   color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
   display: grid;
   place-items: center;
   cursor: pointer;
