@@ -778,14 +778,8 @@ function getChatConfig() {
 function applyProvider(provider) {
   const info = PROVIDERS[provider];
   if (!info || provider === "custom") return;
-  if (!chatEls.model.value.trim() || chatEls.model.dataset.lastProvider !== provider) {
-    chatEls.model.value = info.model;
-  }
-  if (!chatEls.apiBase.value.trim() || chatEls.apiBase.dataset.lastProvider !== provider) {
-    chatEls.apiBase.value = info.apiBase;
-  }
-  chatEls.model.dataset.lastProvider = provider;
-  chatEls.apiBase.dataset.lastProvider = provider;
+  chatEls.model.value = info.model;
+  chatEls.apiBase.value = info.apiBase;
 }
 
 function saveChatConfig() {

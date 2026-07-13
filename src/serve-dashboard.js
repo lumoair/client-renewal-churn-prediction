@@ -242,6 +242,12 @@ function doProviderChat(messages, model, apiKey, apiBaseUrl, res) {
     resp.on("end", () => {
       try {
         const parsed = JSON.parse(data);
+        if (!resp.statusCode || resp.statusCode >= 400) {
+          const errMsg = parsed.error?.message || parsed.error || `HTTP ${resp.statusCode}`;
+          res.writeHead(502, {"Content-Type": "application/json"});
+          res.end(JSON.stringify({reply: `API error: ${errMsg}`}));
+          return;
+        }
         const content = parsed.choices?.[0]?.message?.content || "";
         res.writeHead(200, {"Content-Type": "application/json"});
         res.end(JSON.stringify({reply: content || "No response from provider."}));
@@ -251,9 +257,9 @@ function doProviderChat(messages, model, apiKey, apiBaseUrl, res) {
       }
     });
   });
-  req.on("error", () => {
+  req.on("error", (err) => {
     res.writeHead(502, {"Content-Type": "application/json"});
-    res.end(JSON.stringify({reply: "Cannot reach the API provider. Check your API URL and key."}));
+    res.end(JSON.stringify({reply: `Cannot reach the API provider: ${err.message}. Check your API URL and key.`}));
   });
   req.write(JSON.stringify(payload));
   req.end();
