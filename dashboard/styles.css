@@ -57,7 +57,7 @@ body {
   min-height: 100%;
   background: var(--bg);
   color: var(--text);
-  font-family: Montserrat, "Segoe UI", system-ui, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -547,16 +547,6 @@ body.sidebar-collapsed .sidebar-toggle {
   font-weight: 800;
 }
 
-#due30Count, #due60Count, #due90Count,
-#criticalCount, #watchlistCount, #expansionCount,
-#healthScore, #avgRenewal, #avgChurn,
-#rocAuc, #avgPrecision, #modelAccuracy,
-#concernValue,
-#employeeCount, #negativeBalanceCount, #lowBalanceCount, #avgRemainingBalance,
-.rank-position {
-  font-family: "Playfair Display", Georgia, serif;
-  font-weight: 700;
-}
 
 .snapshot-card small {
   color: var(--muted);
