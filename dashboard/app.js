@@ -763,7 +763,7 @@ function downloadChat() {
 }
 
 const PROVIDERS = {
-  groq: { apiBase: "https://api.groq.com/openai/v1", model: "llama3-70b-8192" },
+  groq: { apiBase: "https://api.groq.com/openai/v1", model: "llama-3.3-70b-versatile" },
   openai: { apiBase: "https://api.openai.com/v1", model: "gpt-4o-mini" },
   gemini: { apiBase: "https://generativelanguage.googleapis.com/v1beta/openai", model: "gemini-2.0-flash" },
   custom: { apiBase: "", model: "" },
@@ -771,9 +771,8 @@ const PROVIDERS = {
 
 const PROVIDER_MODELS = {
   groq: [
-    "llama3-70b-8192", "llama3-8b-8192", "llama-3.3-70b-versatile",
-    "llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it",
-    "gemma-7b-it",
+    "llama-3.3-70b-versatile", "llama-3.1-8b-instant",
+    "mixtral-8x7b-32768", "gemma2-9b-it",
   ],
   openai: [
     "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo",
@@ -802,9 +801,9 @@ function populateModels(provider) {
 
 function getModelValue() {
   if (chatEls.provider.value === "custom") {
-    return chatEls.modelCustom.value.trim() || "llama3-70b-8192";
+    return chatEls.modelCustom.value.trim() || "llama-3.3-70b-versatile";
   }
-  return chatEls.model.value || PROVIDERS[chatEls.provider.value]?.model || "llama3-70b-8192";
+  return chatEls.model.value || PROVIDERS[chatEls.provider.value]?.model || "llama-3.3-70b-versatile";
 }
 
 function getChatConfig() {
