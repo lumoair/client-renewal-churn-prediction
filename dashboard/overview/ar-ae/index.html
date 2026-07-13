@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نظرة عامة على المخاطر</title>
+    <link rel="stylesheet" href="../../ar-ae.css" />
+  </head>
+  <body>
+    <div class="page">
+      <div class="topbar">
+        <div class="brand">
+          <strong>رادار التجديد</strong>
+          <small>واجهة عربية للقسم الرئيسي</small>
+        </div>
+        <div class="topbar-actions">
+          <button class="menu-button" type="button" aria-label="القائمة" data-drawer-open>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <a class="back-link" href="../../index.html">English</a>
+        </div>
+      </div>
+      <div class="drawer-backdrop" id="drawerBackdrop"></div>
+      <aside class="drawer" id="drawer" aria-label="القائمة العربية">
+        <div class="drawer-header">
+          <strong>القائمة</strong>
+          <button class="menu-button" type="button" aria-label="إغلاق القائمة" data-drawer-close>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+        <nav class="drawer-links">
+          <a class="drawer-link active" href="./">نظرة عامة</a>
+          <a class="drawer-link" href="../../risk/ar-ae/">المخاطر</a>
+          <a class="drawer-link" href="../../actions/ar-ae/">الإجراءات</a>
+          <a class="drawer-link" href="../../clients/ar-ae/">العملاء</a>
+          <a class="drawer-link" href="../../employees/ar-ae/">الموظفون</a>
+        </nav>
+      </aside>
+
+      <section class="hero">
+        <div class="panel">
+          <div class="section-label">نظرة عامة</div>
+          <h1 class="title">مراقبة مخاطر التجديد واحتمالية فقدان العملاء من مكان واحد.</h1>
+          <p class="lede">هذه الصفحة تعرض ملخصًا عربيًا للقسم الرئيسي مع مؤشرات واضحة لأولوية الحسابات والحركة المطلوبة.</p>
+        </div>
+        <div class="card">
+          <h3>حالة العرض</h3>
+          <p class="lede" id="overviewAccountCount">0 حساب</p>
+          <small id="overviewRefresh">بانتظار تحميل البيانات</small>
+        </div>
+      </section>
+
+      <section class="metric-grid" style="margin-top:16px">
+        <div class="metric"><span>التجديد خلال 30 يومًا</span><strong id="overviewDue30">0</strong></div>
+        <div class="metric"><span>التجديد خلال 60 يومًا</span><strong id="overviewDue60">0</strong></div>
+        <div class="metric"><span>التجديد خلال 90 يومًا</span><strong id="overviewDue90">0</strong></div>
+        <div class="metric"><span>متوسط احتمال التجديد</span><strong id="overviewRenewalAvg">0%</strong></div>
+      </section>
+
+      <section class="metric-grid" style="margin-top:16px">
+        <div class="metric"><span>ROC AUC</span><strong id="overviewRocAuc">-</strong></div>
+        <div class="metric"><span>Average Precision</span><strong id="overviewAvgPrecision">-</strong></div>
+      </section>
+    </div>
+    <script src="../../ar-ae.js"></script>
+    <script src="../../ar-ae-data.js"></script>
+  </body>
+</html>

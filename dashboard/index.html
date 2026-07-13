@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Renewal Risk Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" id="sidebar">
+        <button id="sidebarToggle" class="sidebar-toggle" type="button" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="brand">
+          <div class="brand-mark">R</div>
+          <div>
+            <div class="brand-name">Renewal Radar</div>
+            <div class="brand-subtitle">Churn visibility and retention actions</div>
+          </div>
+        </div>
+
+        <nav class="section-nav" aria-label="Dashboard sections">
+          <a href="#overview">Overview</a>
+          <a href="#risk">Risk</a>
+          <a href="#actions">Actions</a>
+          <a href="#clients">Clients</a>
+          <a href="#employees">Employees</a>
+        </nav>
+
+        <div class="panel">
+          <label class="file-label" for="csvInput">Load model output CSV</label>
+          <input id="csvInput" class="file-input" type="file" accept=".csv,text/csv" />
+          <p class="hint">Load `outputs/client_risk_scores.csv` to populate the dashboard.</p>
+        </div>
+
+        <div class="panel summary-panel">
+          <div class="panel-title">Model Quality</div>
+          <div id="metrics" class="metric-list">
+            <div class="metric-row"><span>ROC AUC</span><strong id="rocAuc">-</strong></div>
+            <div class="metric-row"><span>Avg Precision</span><strong id="avgPrecision">-</strong></div>
+            <div class="metric-row"><span>Accuracy</span><strong id="accuracy">-</strong></div>
+          </div>
+        </div>
+
+        <div class="panel concern-panel">
+          <div class="panel-title">Concern Meter</div>
+          <div class="concern-gauge-wrap">
+            <div class="concern-gauge">
+              <div id="concernFill" class="concern-fill"></div>
+            </div>
+            <div class="concern-labels">
+              <span>Low</span>
+              <strong id="concernValue">0%</strong>
+              <span>High</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <button id="sidebarToggleTop" class="menu-button" type="button" aria-label="Open navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div class="topbar-copy">
+            <span class="topbar-kicker">Corporate Renewal Intelligence</span>
+            <strong>Portfolio risk, renewal readiness, and retention actions.</strong>
+          </div>
+          <div class="topbar-status">Live view</div>
+        </header>
+
+        <section class="content-section" id="overview">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Overview</p>
+              <h1>See churn risk, renewal potential, and the next best action in one place.</h1>
+            </div>
+            <a class="section-action" lang="ar" href="/dashboard/overview/ar-ae/">العربية</a>
+          </div>
+          <p class="lede">
+            A monochrome dashboard for prioritizing accounts, reducing renewal risk, and surfacing expansion-ready clients.
+          </p>
+          <div class="hero-card hero-inline">
+            <div>
+              <div class="hero-card-label">Current View</div>
+              <div id="recordCount" class="hero-card-value">0 accounts</div>
+              <div class="hero-card-sub" id="lastRefresh">Waiting for data</div>
+            </div>
+            <div class="hero-inline-metrics">
+              <div class="inline-metric">
+                <span>Avg Renewal Potential</span>
+                <strong id="avgRenewal">0%</strong>
+              </div>
+              <div class="inline-metric">
+                <span>Avg Churn Risk</span>
+                <strong id="avgChurn">0%</strong>
+              </div>
+            </div>
+          </div>
+          <section class="snapshot-grid">
+            <article class="snapshot-card snapshot-featured">
+              <span>Renewal Due in 30d</span>
+              <strong id="due30Count">0</strong>
+              <small>Accounts approaching the renewal window</small>
+            </article>
+            <article class="snapshot-card">
+              <span>Renewal Due in 60d</span>
+              <strong id="due60Count">0</strong>
+              <small>Near-term accounts to actively manage</small>
+            </article>
+            <article class="snapshot-card">
+              <span>Renewal Due in 90d</span>
+              <strong id="due90Count">0</strong>
+              <small>Longer-range accounts to pre-wire</small>
+            </article>
+            <article class="snapshot-card">
+              <span>Portfolio View</span>
+              <strong>4 signals</strong>
+              <small>Renewal, churn, risk band, and action coverage</small>
+            </article>
+          </section>
+
+          <section class="kpis" id="kpis">
+            <article class="kpi-card">
+              <span>Critical Risk</span>
+              <strong id="criticalCount">0</strong>
+              <small>Accounts needing immediate intervention</small>
+            </article>
+            <article class="kpi-card">
+              <span>Watchlist</span>
+              <strong id="watchlistCount">0</strong>
+              <small>Clients to monitor closely</small>
+            </article>
+            <article class="kpi-card">
+              <span>Expansion Ready</span>
+              <strong id="expansionCount">0</strong>
+              <small>High renewal confidence and upside</small>
+            </article>
+            <article class="kpi-card">
+              <span>Company Health</span>
+              <strong id="healthScore">--</strong>
+              <small id="healthLabel">Portfolio renewal health indicator</small>
+            </article>
+          </section>
+        </section>
+
+        <section class="content-section" id="risk">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Risk</p>
+              <h2>Risk distribution and top accounts</h2>
+            </div>
+            <a class="section-action" lang="ar" href="/dashboard/risk/ar-ae/">العربية</a>
+          </div>
+          <section class="insight-grid">
+          <article class="panel insight-panel">
+            <div class="panel-header">
+              <h2>Top Risks</h2>
+              <span>Highest churn probability accounts</span>
+            </div>
+            <div id="topRiskList" class="rank-list"></div>
+          </article>
+          </section>
+
+          <section class="grid">
+          <article class="panel chart-panel">
+            <div class="panel-header">
+              <h2>Risk Distribution</h2>
+              <span>Segment mix across the portfolio</span>
+            </div>
+            <canvas id="riskChart" width="680" height="220"></canvas>
+          </article>
+
+          <article class="panel chart-panel">
+            <div class="panel-header">
+              <h2>Churn vs Renewal</h2>
+              <span>Top clients by intervention priority</span>
+            </div>
+            <canvas id="scatterChart" width="680" height="220"></canvas>
+          </article>
+          </section>
+        </section>
+
+        <section class="content-section" id="actions">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Actions</p>
+              <h2>Queue and interventions</h2>
+            </div>
+            <a class="section-action" lang="ar" href="/dashboard/actions/ar-ae/">العربية</a>
+          </div>
+          <div class="panel table-panel">
+            <div class="panel-header table-header">
+              <div>
+                <h2>Action Queue</h2>
+                <span>What to do next by segment</span>
+              </div>
+            </div>
+            <div id="actionQueue" class="action-queue"></div>
+          </div>
+        </section>
+
+        <section class="content-section" id="clients">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Clients</p>
+              <h2>Prioritized account list</h2>
+            </div>
+            <a class="section-action" lang="ar" href="/dashboard/clients/ar-ae/">العربية</a>
+          </div>
+          <section class="panel table-panel">
+            <div class="panel-header table-header">
+              <div>
+                <h2>Client Priorities</h2>
+                <span>Sorted by churn probability</span>
+              </div>
+              <input id="searchInput" class="search-input" type="search" placeholder="Search client id or segment" />
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Churn Risk</th>
+                    <th>Renewal Potential</th>
+                    <th>Segment</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="clientTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="content-section" id="employees">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Employees</p>
+              <h2>Leave balance overview from CSV</h2>
+            </div>
+            <a class="section-action" lang="ar" href="/dashboard/employees/ar-ae/">العربية</a>
+          </div>
+          <p class="lede">
+            This section reads from <code>leave_balance_import_sample.csv</code> in the project root and summarizes employee leave status.
+          </p>
+
+          <section class="kpis employee-kpis" id="employeeKpis">
+            <article class="kpi-card">
+              <span>Total Employees</span>
+              <strong id="employeeCount">0</strong>
+              <small>Rows loaded from the CSV file</small>
+            </article>
+            <article class="kpi-card">
+              <span>Negative Balance</span>
+              <strong id="negativeBalanceCount">0</strong>
+              <small>Employees with estimated deficit</small>
+            </article>
+            <article class="kpi-card">
+              <span>Low Balance</span>
+              <strong id="lowBalanceCount">0</strong>
+              <small>Employees below the alert threshold</small>
+            </article>
+            <article class="kpi-card">
+              <span>Avg Remaining</span>
+              <strong id="avgRemainingBalance">0</strong>
+              <small>Estimated remaining leave days</small>
+            </article>
+          </section>
+
+          <section class="panel table-panel">
+            <div class="panel-header table-header">
+              <div>
+                <h2>Employee Leave Records</h2>
+                <span>Sorted by lowest remaining balance</span>
+              </div>
+              <input id="employeeSearchInput" class="search-input" type="search" placeholder="Search employee, department, or email" />
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Department</th>
+                    <th>Entitlement</th>
+                    <th>Opening</th>
+                    <th>Used</th>
+                    <th>In Lieu</th>
+                    <th>Join Date</th>
+                    <th>Remaining</th>
+                  </tr>
+                </thead>
+                <tbody id="employeeTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <button id="chatToggle" class="chat-toggle" type="button" aria-label="Toggle AI assistant">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+
+    <aside id="chatPanel" class="chat-panel" aria-label="AI assistant">
+      <div class="chat-header">
+        <strong>AI Assistant</strong>
+        <span class="chat-model-badge">Ollama</span>
+        <button id="chatTts" class="chat-tts" type="button" aria-label="Toggle speech output" title="Toggle speech output">🔊</button>
+        <button id="chatClose" class="chat-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <div id="chatMessages" class="chat-messages">
+        <div class="chat-message assistant">
+          <div class="chat-bubble">Hi! I can help you analyze churn risk, understand client segments, and recommend retention actions. Ask me anything about your data.</div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input id="chatInput" class="chat-input" type="text" placeholder="Ask about churn risk, clients, or strategy..." />
+        <button id="chatMic" class="chat-mic" type="button" aria-label="Voice input">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+        <button id="chatSend" class="chat-send" type="button" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

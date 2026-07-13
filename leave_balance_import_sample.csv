@@ -1,0 +1,11 @@
+employee_email,full_name,department,entitlement_days,opening_balance,used_days,time_off_in_lieu,join_date
+sayed.jehad@lumofy.com,Sayed Jehad,Human Resources,21,5.5,3,0,1/15/2024
+fatima.alkhalifa@lumofy.com,Fatima Al Khalifa,Engineering,22,10,8,1,6/1/2023
+ahmed.mansoor@lumofy.com,Ahmed Mansoor,Sales,22,0,0,0,1/5/2026
+noor.abdulla@lumofy.com,Noor Abdulla,Marketing,22,15.75,20,0,3/10/2022
+yousif.hamad@lumofy.com,Yousif Hamad,Finance,22,2,12,2.5,9/20/2023
+maryam.saleh@lumofy.com,Maryam Saleh,Customer Success,22,8,0,0,11/1/2025
+khalid.juma@lumofy.com,Khalid Juma,Engineering,22,-3,5,0,7/1/2021
+layla.ebrahim@lumofy.com,Layla Ebrahim,Product,22,18,22.5,0,2/14/2020
+omar.fakhro@lumofy.com,Omar Fakhro,Operations,22,6.25,4,3,8/19/2024
+zainab.ali@lumofy.com,Zainab Ali,HR,22,,0,0,5/1/2026

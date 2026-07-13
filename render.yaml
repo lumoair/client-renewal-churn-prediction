@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: renewal-radar
+    env: node
+    buildCommand: npm install --include=dev
+    startCommand: node src/serve-dashboard.js
+    healthCheckPath: /dashboard/
+    envVars:
+      - key: NODE_VERSION
+        value: 20
