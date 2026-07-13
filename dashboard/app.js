@@ -896,6 +896,8 @@ async function sendMessage() {
         apiKey: cfg.apiKey || undefined,
         model: cfg.model,
         apiBaseUrl: cfg.apiBaseUrl,
+        rows: state.rows,
+        metrics: state.metrics,
       }),
     });
     const data = await resp.json();

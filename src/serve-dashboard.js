@@ -27,14 +27,14 @@ const server = createServer((req, res) => {
     req.on("data", chunk => body += chunk);
     req.on("end", async () => {
       try {
-        const {messages, apiKey, model, apiBaseUrl} = JSON.parse(body);
+        const {messages, apiKey, model, apiBaseUrl, rows, metrics} = JSON.parse(body);
         if (!messages || !Array.isArray(messages)) {
           res.writeHead(400, {"Content-Type": "application/json"});
           res.end(JSON.stringify({reply: "Expected a messages array."}));
           return;
         }
 
-        const dataContext = buildDataContext();
+        const dataContext = buildDataContext(rows, metrics);
         const lastMsg = messages[messages.length - 1]?.content || "";
         const urls = extractURLs(lastMsg);
         let fetched = "";
@@ -124,20 +124,13 @@ function readCSVSummary(path) {
   } catch { return null; }
 }
 
-function buildDataContext() {
+function buildDataContext(rows, metrics) {
   const parts = [];
 
-  const metrics = readJSON(join(root, "outputs/churn_model_metrics.json"));
   if (metrics) {
-    parts.push(`Churn model metrics: ROC AUC = ${metrics.roc_auc?.toFixed(3) ?? "?"}, Average Precision = ${metrics.average_precision?.toFixed(3) ?? "?"}, Accuracy = ${metrics.classification_report?.accuracy ?? "?"}.`);
+    parts.push(`Churn model metrics: ROC AUC = ${(metrics.roc_auc ?? "?").toFixed?.(3) ?? metrics.roc_auc ?? "?"}, Average Precision = ${(metrics.average_precision ?? "?").toFixed?.(3) ?? metrics.average_precision ?? "?"}, Accuracy = ${metrics.classification_report?.accuracy ?? metrics.accuracy ?? "?"}.`);
   }
 
-  const renewalMetrics = readJSON(join(root, "outputs/renewal_model_metrics.json"));
-  if (renewalMetrics) {
-    parts.push(`Renewal model metrics: ROC AUC = ${renewalMetrics.roc_auc?.toFixed(3) ?? "?"}, Average Precision = ${renewalMetrics.average_precision?.toFixed(3) ?? "?"}, Accuracy = ${renewalMetrics.classification_report?.accuracy ?? "?"}.`);
-  }
-
-  const rows = readCSVSummary(join(root, "outputs/client_risk_scores.csv"));
   if (rows && rows.length > 0) {
     parts.push(`Total accounts in dashboard: ${rows.length}.`);
     const segments = {};
