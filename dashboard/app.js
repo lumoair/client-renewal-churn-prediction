@@ -437,6 +437,7 @@ function calculateRemainingBalance(employee) {
 function drawRiskChart(rows) {
   const canvas = els.riskChart;
   const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
   const { width, height } = canvas;
   ctx.clearRect(0, 0, width, height);
 
@@ -449,11 +450,11 @@ function drawRiskChart(rows) {
   );
 
   const items = [
-    ["critical_risk", counts.critical_risk, "#ff6b8a"],
-    ["high_risk", counts.high_risk, "#4a84ff"],
-    ["watchlist", counts.watchlist, "#2f62f0"],
-    ["healthy", counts.healthy, "#67b8ff"],
-    ["expansion_ready", counts.expansion_ready, "#8ee3ff"],
+    ["critical_risk", counts.critical_risk, "#b91c1c"],
+    ["high_risk", counts.high_risk, "#92400e"],
+    ["watchlist", counts.watchlist, "#555555"],
+    ["healthy", counts.healthy, "#065f46"],
+    ["expansion_ready", counts.expansion_ready, "#1e40af"],
   ];
 
   const max = Math.max(...items.map(([, count]) => count), 1);
@@ -462,24 +463,24 @@ function drawRiskChart(rows) {
   const startX = 36;
   const baseline = height - 42;
 
-  ctx.fillStyle = "#8ea0c7";
+  ctx.fillStyle = "#888";
   ctx.font = "12px Inter, sans-serif";
 
   items.forEach(([label, count, color], index) => {
     const x = startX + index * (barWidth + gap);
     const barHeight = Math.max(12, (count / max) * 136);
     const y = baseline - barHeight;
-    const gradient = ctx.createLinearGradient(0, y, 0, baseline);
-    gradient.addColorStop(0, color);
-    gradient.addColorStop(1, "rgba(74, 132, 255, 0.16)");
-    ctx.fillStyle = gradient;
-    roundRect(ctx, x, y, barWidth, barHeight, 14);
+    ctx.fillStyle = color + "22";
+    roundRect(ctx, x, y, barWidth, barHeight, 8);
     ctx.fill();
+    ctx.fillStyle = color;
+    roundRect(ctx, x, y, barWidth, barHeight, 8);
+    ctx.stroke();
 
-    ctx.fillStyle = "#edf3ff";
+    ctx.fillStyle = "#1a1a1a";
     ctx.font = "700 15px Inter, sans-serif";
     ctx.fillText(String(count), x + 38, y - 10);
-    ctx.fillStyle = "#8ea0c7";
+    ctx.fillStyle = "#888";
     ctx.font = "12px Inter, sans-serif";
     drawMultiline(ctx, label.replace("_", " "), x + 8, baseline + 18, 76, 14);
   });
@@ -504,16 +505,22 @@ function drawScatterChart(rows) {
     const renewal = number(row.renewal_probability);
     const radius = 5 + renewal * 12;
     const color = colorForSegment(row.risk_segment);
+    const alpha = 0.8;
+
+    ctx.beginPath();
+    ctx.fillStyle = color + "33";
+    ctx.arc(x, y, radius + 2, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.globalAlpha = 0.9;
+    ctx.globalAlpha = alpha;
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1;
 
     if (index < 6) {
-      ctx.fillStyle = "#8ea0c7";
+      ctx.fillStyle = "#888";
       ctx.font = "11px Inter, sans-serif";
       ctx.fillText(row.client_id, x - 18, y + radius + 14);
     }
@@ -522,7 +529,7 @@ function drawScatterChart(rows) {
 
 function drawGrid(ctx, width, height) {
   ctx.save();
-  ctx.strokeStyle = "rgba(74, 132, 255, 0.08)";
+  ctx.strokeStyle = "#e5e5e5";
   ctx.lineWidth = 1;
   for (let x = 0; x < width; x += 80) {
     ctx.beginPath();
@@ -572,16 +579,19 @@ function drawMultiline(ctx, text, x, y, maxWidth, lineHeight) {
 function colorForSegment(segment) {
   switch (segment) {
     case "critical_risk":
-      return "#ff6b8a";
+      return "#b91c1c";
     case "high_risk":
-      return "#4a84ff";
+      return "#92400e";
     case "watchlist":
-      return "#2f62f0";
+      return "#555555";
+    case "healthy":
+      return "#065f46";
     case "expansion_ready":
-      return "#67b8ff";
+      return "#1e40af";
     default:
-      return "#8ee3ff";
+      return "#555555";
   }
+}
 }
 
 function renderTable(rows) {
