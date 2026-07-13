@@ -907,6 +907,21 @@ body.sidebar-collapsed .brand-mark {
   50% { transform: scale(1.15); }
 }
 
+.chat-header-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 0.15s;
+}
+
+.chat-header-btn:hover {
+  color: var(--text);
+}
+
 .chat-close {
   margin-left: 4px;
   background: none;

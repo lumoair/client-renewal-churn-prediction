@@ -665,12 +665,16 @@ window.addEventListener("resize", () => {
   drawScatterChart(state.rows);
 });
 
+const STORAGE_KEY = "renewalRadarChat";
+
 const chatEls = {
   toggle: document.getElementById("chatToggle"),
   panel: document.getElementById("chatPanel"),
   close: document.getElementById("chatClose"),
   input: document.getElementById("chatInput"),
   send: document.getElementById("chatSend"),
+  save: document.getElementById("chatSave"),
+  newBtn: document.getElementById("chatNew"),
   mic: document.getElementById("chatMic"),
   tts: document.getElementById("chatTts"),
   messages: document.getElementById("chatMessages"),
@@ -683,13 +687,14 @@ const chatEls = {
 
 let chatHistory = [];
 
-function addMessage(role, text) {
+function addMessage(role, text, save) {
   chatHistory.push({role, content: text});
   const div = document.createElement("div");
   div.className = `chat-message ${role}`;
   div.innerHTML = `<div class="chat-bubble">${text}</div>`;
   chatEls.messages.appendChild(div);
   chatEls.messages.scrollTop = chatEls.messages.scrollHeight;
+  if (save !== false) saveChatHistory();
 }
 
 function setTyping(typing) {
@@ -708,12 +713,50 @@ function setTyping(typing) {
   }
 }
 
-function clearChat() {
+function saveChatHistory() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
+  } catch {}
+}
+
+function loadChatHistory() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return false;
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed) || parsed.length === 0) return false;
+    chatHistory = parsed;
+    chatEls.messages.innerHTML = "";
+    chatHistory.forEach(m => addMessage(m.role, m.content, false));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function clearChat(showWelcome) {
   chatHistory = [];
-  chatEls.messages.innerHTML = `
-    <div class="chat-message assistant">
-      <div class="chat-bubble">Chat cleared. Ask me anything about your data.</div>
-    </div>`;
+  saveChatHistory();
+  chatEls.messages.innerHTML = showWelcome !== false
+    ? `<div class="chat-message assistant">
+        <div class="chat-bubble">Chat cleared. Ask me anything about your data.</div>
+      </div>`
+    : "";
+}
+
+function downloadChat() {
+  if (chatHistory.length === 0) return;
+  const lines = chatHistory.map(m => {
+    const label = m.role === "user" ? "You" : "Assistant";
+    return `[${label}]\n${m.content}\n`;
+  }).join("\n---\n\n");
+  const blob = new Blob([lines], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `renewal-radar-chat-${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 const PROVIDERS = {
@@ -792,7 +835,7 @@ async function sendMessage() {
 
   if (text === "/clear") {
     chatEls.input.value = "";
-    clearChat();
+    clearChat(true);
     return;
   }
 
@@ -908,6 +951,12 @@ if (SpeechRecognition) {
   };
 }
 
+chatEls.save.addEventListener("click", downloadChat);
+chatEls.newBtn.addEventListener("click", () => {
+  if (chatHistory.length > 0 && !confirm("Start a new chat? Current conversation will be cleared.")) return;
+  clearChat(true);
+});
+
 chatEls.mic.addEventListener("click", () => {
   if (!recognition) {
     chatEls.mic.classList.add("denied");
@@ -935,4 +984,5 @@ chatEls.mic.addEventListener("click", () => {
 });
 
 loadChatConfig();
+if (!loadChatHistory()) clearChat(true);
 loadDefaultData();
