@@ -311,13 +311,20 @@
     <aside id="chatPanel" class="chat-panel" aria-label="AI assistant">
       <div class="chat-header">
         <strong>AI Assistant</strong>
-        <span class="chat-model-badge">Ollama</span>
+        <span id="chatModelBadge" class="chat-model-badge">API Key</span>
         <button id="chatTts" class="chat-tts" type="button" aria-label="Toggle speech output" title="Toggle speech output">🔊</button>
         <button id="chatClose" class="chat-close" type="button" aria-label="Close">&times;</button>
       </div>
+      <div class="chat-config">
+        <input id="chatApiKey" class="chat-input chat-config-input" type="password" placeholder="API Key (e.g. sk-...)" />
+        <div class="chat-config-row">
+          <input id="chatModel" class="chat-input chat-config-half" type="text" placeholder="Model (e.g. gpt-4o-mini)" />
+          <input id="chatApiBase" class="chat-input chat-config-half" type="text" placeholder="API URL (e.g. https://api.openai.com/v1)" />
+        </div>
+      </div>
       <div id="chatMessages" class="chat-messages">
         <div class="chat-message assistant">
-          <div class="chat-bubble">Hi! I can help you analyze churn risk, understand client segments, and recommend retention actions. Ask me anything about your data.</div>
+          <div class="chat-bubble">Hi! I can help you analyze churn risk, understand client segments, and recommend retention actions. Enter your API key above to get started, or ask me anything about your data.</div>
         </div>
       </div>
       <div class="chat-input-area">

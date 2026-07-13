@@ -809,7 +809,7 @@ body.sidebar-collapsed .brand-mark {
   right: 24px;
   z-index: 100;
   width: 400px;
-  max-height: 560px;
+  max-height: 620px;
   background: var(--panel-strong);
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -821,6 +821,30 @@ body.sidebar-collapsed .brand-mark {
 
 .chat-panel.open {
   display: flex;
+}
+
+.chat-config {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  display: grid;
+  gap: 8px;
+}
+
+.chat-config-input {
+  font-size: 0.8rem;
+  padding: 8px 10px;
+}
+
+.chat-config-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.chat-config-half {
+  font-size: 0.8rem;
+  padding: 8px 10px;
 }
 
 .chat-header {

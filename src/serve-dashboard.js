@@ -22,12 +22,12 @@ const MIME_TYPES = {
 const server = createServer((req, res) => {
   let url = req.url.split("?")[0];
 
-  if (req.method === "POST" && url === "/api/chat") {
+    if (req.method === "POST" && url === "/api/chat") {
     let body = "";
     req.on("data", chunk => body += chunk);
     req.on("end", async () => {
       try {
-        const {messages} = JSON.parse(body);
+        const {messages, apiKey, model, apiBaseUrl} = JSON.parse(body);
         if (!messages || !Array.isArray(messages)) {
           res.writeHead(400, {"Content-Type": "application/json"});
           res.end(JSON.stringify({reply: "Expected a messages array."}));
@@ -43,15 +43,18 @@ const server = createServer((req, res) => {
           fetched = "I fetched the following web content for you. Read it carefully and use it to answer the user. Do not say you cannot access the web — the content is right here.\n\n" + results.join("\n\n---\n\n");
         }
 
-        const ollamaMessages = [
-          {
-            role: "system",
-            content: "You are a retention analyst assistant for Renewal Radar, a churn prediction and client renewal dashboard. Answer concisely and focus on churn risk analysis, retention strategy, and client insights.\n\n" + dataContext + (fetched ? "\n\n" + fetched : ""),
-          },
-          ...messages,
-        ];
+        const systemMessage = {
+          role: "system",
+          content: "You are a retention analyst assistant for Renewal Radar, a churn prediction and client renewal dashboard. Answer concisely and focus on churn risk analysis, retention strategy, and client insights.\n\n" + dataContext + (fetched ? "\n\n" + fetched : ""),
+        };
 
-        doOllamaChat(ollamaMessages, res);
+        const chatMessages = [systemMessage, ...messages];
+
+        if (apiKey) {
+          doProviderChat(chatMessages, model || "gpt-4o-mini", apiKey, apiBaseUrl || "https://api.openai.com/v1", res);
+        } else {
+          await doOllamaChat(chatMessages, res);
+        }
       } catch (e) {
         res.writeHead(400, {"Content-Type": "application/json"});
         res.end(JSON.stringify({reply: "Invalid request."}));
@@ -211,6 +214,49 @@ async function doOllamaChat(messages, res) {
     res.writeHead(503, {"Content-Type": "application/json"});
     res.end(JSON.stringify({reply: e.message === "Cannot reach Ollama" ? "Cannot reach Ollama. Make sure it's running on port 11434." : "The assistant encountered an error."}));
   }
+}
+
+function doProviderChat(messages, model, apiKey, apiBaseUrl, res) {
+  const urlObj = new URL(apiBaseUrl);
+  const payload = {
+    model,
+    messages,
+    max_tokens: 1024,
+  };
+
+  const options = {
+    hostname: urlObj.hostname,
+    port: urlObj.port || (urlObj.protocol === "https:" ? 443 : 80),
+    path: (urlObj.pathname === "/" ? "" : urlObj.pathname.replace(/\/$/, "")) + "/chat/completions",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    },
+  };
+
+  const mod = urlObj.protocol === "https:" ? httpsRequest : httpRequest;
+  const req = mod(options, resp => {
+    let data = "";
+    resp.on("data", chunk => data += chunk);
+    resp.on("end", () => {
+      try {
+        const parsed = JSON.parse(data);
+        const content = parsed.choices?.[0]?.message?.content || "";
+        res.writeHead(200, {"Content-Type": "application/json"});
+        res.end(JSON.stringify({reply: content || "No response from provider."}));
+      } catch {
+        res.writeHead(502, {"Content-Type": "application/json"});
+        res.end(JSON.stringify({reply: "Failed to parse provider response."}));
+      }
+    });
+  });
+  req.on("error", () => {
+    res.writeHead(502, {"Content-Type": "application/json"});
+    res.end(JSON.stringify({reply: "Cannot reach the API provider. Check your API URL and key."}));
+  });
+  req.write(JSON.stringify(payload));
+  req.end();
 }
 
 const PORT = process.env.PORT || 8000;

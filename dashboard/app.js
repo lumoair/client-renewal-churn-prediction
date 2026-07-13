@@ -674,6 +674,10 @@ const chatEls = {
   mic: document.getElementById("chatMic"),
   tts: document.getElementById("chatTts"),
   messages: document.getElementById("chatMessages"),
+  apiKey: document.getElementById("chatApiKey"),
+  model: document.getElementById("chatModel"),
+  apiBase: document.getElementById("chatApiBase"),
+  badge: document.getElementById("chatModelBadge"),
 };
 
 let chatHistory = [];
@@ -711,6 +715,49 @@ function clearChat() {
     </div>`;
 }
 
+function getChatConfig() {
+  return {
+    apiKey: chatEls.apiKey.value.trim(),
+    model: chatEls.model.value.trim() || "gpt-4o-mini",
+    apiBaseUrl: chatEls.apiBase.value.trim() || "https://api.openai.com/v1",
+  };
+}
+
+function saveChatConfig() {
+  const cfg = getChatConfig();
+  localStorage.setItem("chatApiKey", cfg.apiKey);
+  localStorage.setItem("chatModel", cfg.model);
+  localStorage.setItem("chatApiBase", cfg.apiBaseUrl);
+  updateChatBadge(cfg.apiKey);
+}
+
+function updateChatBadge(apiKey) {
+  if (apiKey) {
+    const cfg = getChatConfig();
+    chatEls.badge.textContent = cfg.model;
+    chatEls.badge.style.background = "rgba(90, 215, 164, 0.15)";
+    chatEls.badge.style.color = "#5ad7a4";
+  } else {
+    chatEls.badge.textContent = "No API Key";
+    chatEls.badge.style.background = "rgba(255, 103, 130, 0.15)";
+    chatEls.badge.style.color = "#ff6782";
+  }
+}
+
+function loadChatConfig() {
+  const key = localStorage.getItem("chatApiKey") || "";
+  const model = localStorage.getItem("chatModel") || "gpt-4o-mini";
+  const base = localStorage.getItem("chatApiBase") || "https://api.openai.com/v1";
+  if (chatEls.apiKey) chatEls.apiKey.value = key;
+  if (chatEls.model) chatEls.model.value = model;
+  if (chatEls.apiBase) chatEls.apiBase.value = base;
+  updateChatBadge(key);
+}
+
+chatEls.apiKey.addEventListener("input", saveChatConfig);
+chatEls.model.addEventListener("input", saveChatConfig);
+chatEls.apiBase.addEventListener("input", saveChatConfig);
+
 async function sendMessage() {
   const text = chatEls.input.value.trim();
   if (!text) return;
@@ -725,10 +772,16 @@ async function sendMessage() {
   addMessage("user", text.replace(/</g, "&lt;").replace(/>/g, "&gt;"));
   setTyping(true);
   try {
+    const cfg = getChatConfig();
     const resp = await fetch("/api/chat", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({messages: chatHistory}),
+      body: JSON.stringify({
+        messages: chatHistory,
+        apiKey: cfg.apiKey || undefined,
+        model: cfg.model,
+        apiBaseUrl: cfg.apiBaseUrl,
+      }),
     });
     const data = await resp.json();
     setTyping(false);
@@ -739,7 +792,7 @@ async function sendMessage() {
     speakText(voiceText);
   } catch {
     setTyping(false);
-    addMessage("error", "Could not reach the assistant. Make sure Ollama is running.");
+    addMessage("error", "Could not reach the assistant. Check your API key and connection.");
   }
 }
 
@@ -853,4 +906,5 @@ chatEls.mic.addEventListener("click", () => {
   }
 });
 
+loadChatConfig();
 loadDefaultData();
