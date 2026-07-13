@@ -474,7 +474,7 @@ function drawRiskChart(rows) {
     roundRect(ctx, x, y, barWidth, barHeight, 8);
     ctx.stroke();
 
-    ctx.fillStyle = "#1a1a1a";
+    ctx.fillStyle = "#0c0c0c";
     ctx.font = "700 15px Inter, sans-serif";
     ctx.fillText(String(count), x + 38, y - 10);
     ctx.fillStyle = "#888";
