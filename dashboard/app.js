@@ -941,6 +941,9 @@ els.csvInput.addEventListener("change", async (event) => {
 });
 
 document.getElementById("langToggle")?.addEventListener("click", toggleLang);
+document.getElementById("claudeBtn")?.addEventListener("click", () => {
+  window.open("https://claude.ai", "claudePopup", "width=1000,height=750,scrollbars=yes");
+});
 els.sidebarToggle.addEventListener("click", toggleNavigation);
 els.sidebarToggleTop.addEventListener("click", toggleNavigation);
 
