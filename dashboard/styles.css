@@ -1123,3 +1123,77 @@ body.sidebar-collapsed .brand-mark {
     right: 16px;
   }
 }
+
+html[dir="rtl"] .shell {
+  direction: rtl;
+}
+
+html[dir="rtl"] .sidebar {
+  text-align: right;
+}
+
+html[dir="rtl"] .section-nav a {
+  text-align: right;
+}
+
+html[dir="rtl"] .hero-card-value {
+  direction: ltr;
+  text-align: right;
+}
+
+html[dir="rtl"] .metric-row {
+  direction: ltr;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+html[dir="rtl"] .chat-message.user {
+  justify-content: flex-start;
+}
+
+html[dir="rtl"] .chat-message.assistant {
+  justify-content: flex-end;
+}
+
+html[dir="rtl"] .chat-message.assistant .chat-bubble {
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 4px;
+}
+
+html[dir="rtl"] .chat-message.user .chat-bubble {
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 4px;
+}
+
+html[dir="rtl"] .topbar-copy {
+  text-align: right;
+}
+
+html[dir="rtl"] .section-header {
+  text-align: right;
+}
+
+html[dir="rtl"] .section-action {
+  direction: rtl;
+}
+
+html[dir="rtl"] th,
+html[dir="rtl"] td {
+  text-align: right;
+}
+
+html[dir="rtl"] .search-input {
+  text-align: right;
+}
+
+html[dir="rtl"] .chat-config-row {
+  direction: rtl;
+}
+
+html[dir="rtl"] .chat-header {
+  direction: rtl;
+}
+
+html[dir="rtl"] .chat-input-area {
+  direction: rtl;
+}

@@ -1,3 +1,291 @@
+const LOCALE_KEY = "renewalRadarLang";
+
+const LOCALES = {
+  en: {
+    lang: "en-GB",
+    dir: "ltr",
+    brand: "Renewal Radar",
+    brandSub: "Churn visibility and retention actions",
+    navOverview: "Overview",
+    navRisk: "Risk",
+    navActions: "Actions",
+    navClients: "Clients",
+    navEmployees: "Employees",
+    loadCsv: "Load model output CSV",
+    csvHint: "Load outputs/client_risk_scores.csv to populate the dashboard.",
+    modelQuality: "Model Quality",
+    rocAuc: "ROC AUC",
+    avgPrecision: "Avg Precision",
+    accuracy: "Accuracy",
+    concernMeter: "Concern Meter",
+    low: "Low",
+    high: "High",
+    topbarKicker: "Corporate Renewal Intelligence",
+    topbarTitle: "Portfolio risk, renewal readiness, and retention actions.",
+    liveView: "Live view",
+    overview: "Overview",
+    overviewTitle: "See churn risk, renewal potential, and the next best action in one place.",
+    overviewDesc: "A monochrome dashboard for prioritizing accounts, reducing renewal risk, and surfacing expansion-ready clients.",
+    currentView: "Current View",
+    accounts_zero: "{n} accounts",
+    accounts_one: "{n} account",
+    accounts_other: "{n} accounts",
+    waitingData: "Waiting for data",
+    avgRenewal: "Avg Renewal Potential",
+    avgChurn: "Avg Churn Risk",
+    renewalDue30: "Renewal Due in 30d",
+    renewalDue60: "Renewal Due in 60d",
+    renewalDue90: "Renewal Due in 90d",
+    portfolioView: "Portfolio View",
+    signals: "4 signals",
+    portfolioDesc: "Renewal, churn, risk band, and action coverage",
+    criticalRisk: "Critical Risk",
+    watchlist: "Watchlist",
+    expansionReady: "Expansion Ready",
+    companyHealth: "Company Health",
+    immediateIntervention: "Accounts needing immediate intervention",
+    monitorClosely: "Clients to monitor closely",
+    highConfidence: "High renewal confidence and upside",
+    healthIndicator: "Portfolio renewal health indicator",
+    risk: "Risk",
+    riskTitle: "Risk distribution and top accounts",
+    topRisks: "Top Risks",
+    topRisksDesc: "Highest churn probability accounts",
+    riskDistribution: "Risk Distribution",
+    riskDistDesc: "Segment mix across the portfolio",
+    churnVsRenewal: "Churn vs Renewal",
+    churnVsRenewalDesc: "Top clients by intervention priority",
+    actions: "Actions",
+    actionsTitle: "Queue and interventions",
+    actionQueue: "Action Queue",
+    actionQueueDesc: "What to do next by segment",
+    clients: "Clients",
+    clientsTitle: "Prioritized account list",
+    clientPriorities: "Client Priorities",
+    clientPrioritiesDesc: "Sorted by churn probability",
+    searchClient: "Search client id or segment",
+    client: "Client",
+    churnRisk: "Churn Risk",
+    renewalPotential: "Renewal Potential",
+    segment: "Segment",
+    action: "Action",
+    employees: "Employees",
+    employeesTitle: "Leave balance overview from CSV",
+    employeesDesc: "This section reads from leave_balance_import_sample.csv in the project root and summarizes employee leave status.",
+    totalEmployees: "Total Employees",
+    rowsLoaded: "Rows loaded from the CSV file",
+    negativeBalance: "Negative Balance",
+    deficit: "Employees with estimated deficit",
+    lowBalance: "Low Balance",
+    belowThreshold: "Employees below the alert threshold",
+    avgRemaining: "Avg Remaining",
+    estimatedDays: "Estimated remaining leave days",
+    employeeLeaveRecords: "Employee Leave Records",
+    sortedLowest: "Sorted by lowest remaining balance",
+    searchEmployee: "Search employee, department, or email",
+    employee: "Employee",
+    department: "Department",
+    entitlement: "Entitlement",
+    opening: "Opening",
+    used: "Used",
+    inLieu: "In Lieu",
+    joinDate: "Join Date",
+    remaining: "Remaining",
+    aiAssistant: "AI Assistant",
+    apiKey: "API Key",
+    saveChat: "Save chat",
+    newChat: "New chat",
+    toggleSpeech: "Toggle speech output",
+    close: "Close",
+    apiKeyPlaceholder: "API Key (e.g. gsk_... for Groq)",
+    customModel: "Custom model name",
+    apiBasePlaceholder: "API Base URL (auto-filled for Groq/OpenAI)",
+    chatWelcome: "Hi! I can help you analyze churn risk, understand client segments, and recommend retention actions. Enter your API key above to get started, or ask me anything about your data.",
+    chatInputPlaceholder: "Ask about churn risk, clients, or strategy...",
+    voiceInput: "Voice input",
+    send: "Send",
+    noApiKey: "No API Key",
+    chatCleared: "Chat cleared. Ask me anything about your data.",
+    newChatConfirm: "Start a new chat? Current conversation will be cleared.",
+    noMatch: "No matching clients found.",
+    noMatchEmployee: "No matching employees found.",
+    noRiskData: "No risk-ranked accounts available.",
+    updated: "Updated",
+    noResponse: "No response.",
+    networkError: "Could not reach the assistant. Check your API key and connection.",
+    healthGood: "Stable — low churn probability",
+    healthWarn: "Moderate risk — monitor closely",
+    healthBad: "High risk — intervene now",
+    toggleLang: "العربية",
+  },
+  ar: {
+    lang: "ar-BH",
+    dir: "rtl",
+    brand: "رادار التجديد",
+    brandSub: "رؤية التوقف وإجراءات الاحتفاظ",
+    navOverview: "نظرة عامة",
+    navRisk: "المخاطر",
+    navActions: "الإجراءات",
+    navClients: "العملاء",
+    navEmployees: "الموظفين",
+    loadCsv: "تحميل ملف CSV",
+    csvHint: "قم بتحميل ملف client_risk_scores.csv لملء لوحة البيانات.",
+    modelQuality: "جودة النموذج",
+    rocAuc: "ROC AUC",
+    avgPrecision: "متوسط الدقة",
+    accuracy: "الدقة",
+    concernMeter: "مؤشر القلق",
+    low: "منخفض",
+    high: "مرتفع",
+    topbarKicker: "ذكاء تجديد الشركات",
+    topbarTitle: "مخاطر المحفظة والاستعداد للتجديد وإجراءات الاحتفاظ.",
+    liveView: "عرض مباشر",
+    overview: "نظرة عامة",
+    overviewTitle: "شاهد مخاطر التوقف وإمكانات التجديد وأفضل إجراء تالي في مكان واحد.",
+    overviewDesc: "لوحة بيانات أحادية اللون لتحديد أولويات الحسابات وتقليل مخاطر التجديد وإظهار العملاء المستعدين للتوسع.",
+    currentView: "العرض الحالي",
+    accounts_zero: "{n} حساب",
+    accounts_one: "{n} حساب",
+    accounts_other: "{n} حساب",
+    waitingData: "بانتظار البيانات",
+    avgRenewal: "متوسط إمكانات التجديد",
+    avgChurn: "متوسط مخاطر التوقف",
+    renewalDue30: "التجديد المستحق خلال 30 يوم",
+    renewalDue60: "التجديد المستحق خلال 60 يوم",
+    renewalDue90: "التجديد المستحق خلال 90 يوم",
+    portfolioView: "نظرة المحفظة",
+    signals: "4 إشارات",
+    portfolioDesc: "التجديد والتوقف ونطاق المخاطر وتغطية الإجراءات",
+    criticalRisk: "مخاطر حرجة",
+    watchlist: "قائمة المراقبة",
+    expansionReady: "جاهز للتوسع",
+    companyHealth: "صحة الشركة",
+    immediateIntervention: "حسابات تحتاج تدخل فوري",
+    monitorClosely: "عملاء للمراقبة عن كثب",
+    highConfidence: "ثقة عالية في التجديد وإمكانات صاعدة",
+    healthIndicator: "مؤشر صحة تجديد المحفظة",
+    risk: "المخاطر",
+    riskTitle: "توزيع المخاطر وأهم الحسابات",
+    topRisks: "أهم المخاطر",
+    topRisksDesc: "الحسابات ذات أعلى احتمالية للتوقف",
+    riskDistribution: "توزيع المخاطر",
+    riskDistDesc: "مزيج الشرائح عبر المحفظة",
+    churnVsRenewal: "التوقف مقابل التجديد",
+    churnVsRenewalDesc: "أهم العملاء حسب أولوية التدخل",
+    actions: "الإجراءات",
+    actionsTitle: "قائمة الانتظار والتدخلات",
+    actionQueue: "قائمة الإجراءات",
+    actionQueueDesc: "ما يجب فعله بعد حسب الشريحة",
+    clients: "العملاء",
+    clientsTitle: "قائمة الحسابات ذات الأولوية",
+    clientPriorities: "أولويات العملاء",
+    clientPrioritiesDesc: "مرتبة حسب احتمالية التوقف",
+    searchClient: "ابحث عن معرف العميل أو الشريحة",
+    client: "العميل",
+    churnRisk: "مخاطر التوقف",
+    renewalPotential: "إمكانات التجديد",
+    segment: "الشريحة",
+    action: "الإجراء",
+    employees: "الموظفين",
+    employeesTitle: "نظرة عامة على رصيد الإجازات من CSV",
+    employeesDesc: "يقرأ هذا القسم من ملف leave_balance_import_sample.csv ويلخص حالة إجازات الموظفين.",
+    totalEmployees: "إجمالي الموظفين",
+    rowsLoaded: "صفوف تم تحميلها من ملف CSV",
+    negativeBalance: "رصيد سلبي",
+    deficit: "موظفون بعجز تقديري",
+    lowBalance: "رصيد منخفض",
+    belowThreshold: "موظفون تحت حد التنبيه",
+    avgRemaining: "المتوسط المتبقي",
+    estimatedDays: "أيام الإجازة المتبقية المقدرة",
+    employeeLeaveRecords: "سجلات إجازات الموظفين",
+    sortedLowest: "مرتبة حسب أقل رصيد متبقي",
+    searchEmployee: "ابحث عن موظف أو قسم أو بريد إلكتروني",
+    employee: "الموظف",
+    department: "القسم",
+    entitlement: "الاستحقاق",
+    opening: "الرصيد الافتتاحي",
+    used: "المستخدم",
+    inLieu: "بدل نقدي",
+    joinDate: "تاريخ الانضمام",
+    remaining: "المتبقي",
+    aiAssistant: "المساعد الذكي",
+    apiKey: "مفتاح API",
+    saveChat: "حفظ المحادثة",
+    newChat: "محادثة جديدة",
+    toggleSpeech: "تشغيل/إيقاف الصوت",
+    close: "إغلاق",
+    apiKeyPlaceholder: "مفتاح API (مثل gsk_... لـ Groq)",
+    customModel: "اسم النموذج المخصص",
+    apiBasePlaceholder: "عنوان API الأساسي (يُملأ تلقائياً لـ Groq/OpenAI)",
+    chatWelcome: "مرحباً! يمكنني مساعدتك في تحليل مخاطر التوقف وفهم شرائح العملاء والتوصية بإجراءات الاحتفاظ. أدخل مفتاح API أعلاه للبدء، أو اسألني عن بياناتك.",
+    chatInputPlaceholder: "اسأل عن مخاطر التوقف أو العملاء أو الاستراتيجية...",
+    voiceInput: "إدخال صوتي",
+    send: "إرسال",
+    noApiKey: "لا يوجد مفتاح API",
+    chatCleared: "تم مسح المحادثة. اسألني عن بياناتك.",
+    newChatConfirm: "بدء محادثة جديدة؟ سيتم مسح المحادثة الحالية.",
+    noMatch: "لا يوجد عملاء متطابقون.",
+    noMatchEmployee: "لا يوجد موظفون متطابقون.",
+    noRiskData: "لا توجد حسابات مصنفة حسب المخاطر.",
+    updated: "آخر تحديث",
+    noResponse: "لا يوجد رد.",
+    networkError: "تعذر الوصول إلى المساعد. تحقق من مفتاح API والاتصال.",
+    healthGood: "مستقر — احتمالية توقف منخفضة",
+    healthWarn: "مخاطر معتدلة — راقب عن كثب",
+    healthBad: "مخاطر عالية — تدخل فوري",
+    toggleLang: "English",
+  },
+};
+
+let currentLang = localStorage.getItem(LOCALE_KEY) || "ar";
+
+function t(key, replacements) {
+  let str = LOCALES[currentLang]?.[key] ?? LOCALES.en[key] ?? key;
+  if (replacements) {
+    Object.entries(replacements).forEach(([k, v]) => { str = str.replace(`{${k}}`, v); });
+  }
+  return str;
+}
+
+function applyLang() {
+  const locale = LOCALES[currentLang];
+  document.documentElement.lang = locale.lang;
+  document.documentElement.dir = locale.dir;
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    const attr = el.dataset.i18nAttr;
+    if (attr) {
+      el.setAttribute(attr, t(key));
+    } else {
+      el.textContent = t(key);
+    }
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+
+  document.querySelectorAll("[data-i18n-title]").forEach(el => {
+    el.title = t(el.dataset.i18nTitle);
+  });
+
+  const toggle = document.getElementById("langToggle");
+  if (toggle) toggle.textContent = t("toggleLang");
+
+  const brandMark = document.getElementById("brandMark");
+  if (brandMark) brandMark.textContent = currentLang === "ar" ? "ر" : "R";
+
+  localStorage.setItem(LOCALE_KEY, currentLang);
+}
+
+function toggleLang() {
+  currentLang = currentLang === "ar" ? "en" : "ar";
+document.getElementById("langToggle")?.addEventListener("click", toggleLang);
+applyLang();
+  if (typeof updateUI === "function") updateUI();
+}
+
 const state = {
   rows: [],
   metrics: null,
@@ -31,7 +319,6 @@ const els = {
   actionQueue: document.getElementById("actionQueue"),
   rocAuc: document.getElementById("rocAuc"),
   avgPrecision: document.getElementById("avgPrecision"),
-  accuracy: document.getElementById("accuracy"),
   riskChart: document.getElementById("riskChart"),
   scatterChart: document.getElementById("scatterChart"),
   concernFill: document.getElementById("concernFill"),
@@ -304,7 +591,7 @@ function renderTable(rows) {
   });
 
   if (!filtered.length) {
-    els.clientTable.innerHTML = `<tr><td class="empty" colspan="5">No matching clients found.</td></tr>`;
+    els.clientTable.innerHTML = `<tr><td class="empty" colspan="5">${t("noMatch")}</td></tr>`;
     return;
   }
 
@@ -350,7 +637,7 @@ function renderInsights(rows) {
           `;
         })
         .join("")
-    : `<div class="empty">No risk-ranked accounts available.</div>`;
+    : `<div class="empty">${t("noRiskData")}</div>`;
 
   els.topRiskList.innerHTML = topHtml;
 
@@ -405,7 +692,7 @@ function renderEmployeeTable(rows) {
   });
 
   if (!filtered.length) {
-    els.employeeTable.innerHTML = `<tr><td class="empty" colspan="8">No matching employees found.</td></tr>`;
+    els.employeeTable.innerHTML = `<tr><td class="empty" colspan="8">${t("noMatchEmployee")}</td></tr>`;
     return;
   }
 
@@ -459,7 +746,7 @@ function updateSummary(rows, metrics) {
     return days != null && days > 60 && days <= 90;
   }).length;
 
-  els.recordCount.textContent = `${total} accounts`;
+  els.recordCount.textContent = total ? `${total} ${t("accounts_other").replace("{n}", total)}` : t("waitingData");
   els.avgRenewal.textContent = `${Math.round(renewalAverage * 100)}%`;
   els.due30Count.textContent = due30;
   els.due60Count.textContent = due60;
@@ -468,12 +755,12 @@ function updateSummary(rows, metrics) {
   els.watchlistCount.textContent = counts.watchlist;
   els.expansionCount.textContent = counts.expansion_ready;
   els.avgChurn.textContent = total ? `${Math.round((counts.churn / total) * 100)}%` : "0%";
-  els.lastRefresh.textContent = `Updated ${new Date().toLocaleString()}`;
+  els.lastRefresh.textContent = `${t("updated")} ${new Date().toLocaleString(currentLang === "ar" ? "ar-BH" : "en-GB")}`;
 
   if (metrics) {
     els.rocAuc.textContent = metrics.roc_auc ? metrics.roc_auc.toFixed(3) : "-";
     els.avgPrecision.textContent = metrics.average_precision ? metrics.average_precision.toFixed(3) : "-";
-    els.accuracy.textContent = metrics.classification_report?.accuracy
+    document.getElementById("modelAccuracy").textContent = metrics.classification_report?.accuracy
       ? metrics.classification_report.accuracy.toFixed(3)
       : "-";
   }
@@ -569,7 +856,7 @@ function renderConcern(value) {
     els.healthScore.className = health >= 70 ? "health-good" : health >= 40 ? "health-warn" : "health-bad";
   }
   if (els.healthLabel) {
-    els.healthLabel.textContent = rounded >= 70 ? "High risk — intervene now" : rounded >= 40 ? "Moderate risk — monitor closely" : "Stable — low churn probability";
+    els.healthLabel.textContent = rounded >= 70 ? t("healthBad") : rounded >= 40 ? t("healthWarn") : t("healthGood");
   }
 }
 
@@ -742,7 +1029,7 @@ function clearChat(showWelcome) {
   saveChatHistory();
   chatEls.messages.innerHTML = showWelcome !== false
     ? `<div class="chat-message assistant">
-        <div class="chat-bubble">Chat cleared. Ask me anything about your data.</div>
+        <div class="chat-bubble">${t("chatCleared")}</div>
       </div>`
     : "";
 }
@@ -839,7 +1126,7 @@ function updateChatBadge(apiKey) {
     chatEls.badge.style.background = "rgba(90, 215, 164, 0.15)";
     chatEls.badge.style.color = "#5ad7a4";
   } else {
-    chatEls.badge.textContent = "No API Key";
+    chatEls.badge.textContent = t("noApiKey");
     chatEls.badge.style.background = "rgba(255, 103, 130, 0.15)";
     chatEls.badge.style.color = "#ff6782";
   }
@@ -898,6 +1185,7 @@ async function sendMessage() {
         apiBaseUrl: cfg.apiBaseUrl,
         rows: state.rows,
         metrics: state.metrics,
+        lang: currentLang,
       }),
     });
     const data = await resp.json();
@@ -909,7 +1197,7 @@ async function sendMessage() {
     speakText(voiceText);
   } catch {
     setTyping(false);
-    addMessage("error", "Could not reach the assistant. Check your API key and connection.");
+    addMessage("error", t("networkError"));
   }
 }
 
@@ -999,7 +1287,7 @@ if (SpeechRecognition) {
 
 chatEls.save.addEventListener("click", downloadChat);
 chatEls.newBtn.addEventListener("click", () => {
-  if (chatHistory.length > 0 && !confirm("Start a new chat? Current conversation will be cleared.")) return;
+  if (chatHistory.length > 0 && !confirm(t("newChatConfirm"))) return;
   clearChat(true);
 });
 
@@ -1029,6 +1317,7 @@ chatEls.mic.addEventListener("click", () => {
   }
 });
 
+applyLang();
 loadChatConfig();
 if (!loadChatHistory()) clearChat(true);
 loadDefaultData();

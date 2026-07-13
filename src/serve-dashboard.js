@@ -27,7 +27,7 @@ const server = createServer((req, res) => {
     req.on("data", chunk => body += chunk);
     req.on("end", async () => {
       try {
-        const {messages, apiKey, model, apiBaseUrl, rows, metrics} = JSON.parse(body);
+        const {messages, apiKey, model, apiBaseUrl, rows, metrics, lang} = JSON.parse(body);
         if (!messages || !Array.isArray(messages)) {
           res.writeHead(400, {"Content-Type": "application/json"});
           res.end(JSON.stringify({reply: "Expected a messages array."}));
@@ -43,9 +43,13 @@ const server = createServer((req, res) => {
           fetched = "I fetched the following web content for you. Read it carefully and use it to answer the user. Do not say you cannot access the web — the content is right here.\n\n" + results.join("\n\n---\n\n");
         }
 
+        const langInstruction = lang === "ar"
+          ? "\n\nIMPORTANT: Respond in Arabic (Bahrain dialect). Use Arabic for all replies. Only use English if the user explicitly asks."
+          : "";
+
         const systemMessage = {
           role: "system",
-          content: "You are a retention analyst assistant for Renewal Radar, a churn prediction and client renewal dashboard. Answer concisely and focus on churn risk analysis, retention strategy, and client insights.\n\n" + dataContext + (fetched ? "\n\n" + fetched : ""),
+          content: "You are a retention analyst assistant for Renewal Radar, a churn prediction and client renewal dashboard. Answer concisely and focus on churn risk analysis, retention strategy, and client insights." + langInstruction + "\n\n" + dataContext + (fetched ? "\n\n" + fetched : ""),
         };
 
         const chatMessages = [systemMessage, ...messages];
