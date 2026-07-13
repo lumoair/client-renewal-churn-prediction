@@ -757,7 +757,7 @@ function updateSummary(rows, metrics) {
     return days != null && days > 60 && days <= 90;
   }).length;
 
-  els.recordCount.textContent = total ? `${total} ${t("accounts_other").replace("{n}", total)}` : t("waitingData");
+  els.recordCount.textContent = total ? t("accounts_other").replace("{n}", total) : t("waitingData");
   els.avgRenewal.textContent = `${Math.round(renewalAverage * 100)}%`;
   els.due30Count.textContent = due30;
   els.due60Count.textContent = due60;
