@@ -764,6 +764,7 @@ function downloadChat() {
 const PROVIDERS = {
   groq: { apiBase: "https://api.groq.com/openai/v1", model: "llama3-70b-8192" },
   openai: { apiBase: "https://api.openai.com/v1", model: "gpt-4o-mini" },
+  gemini: { apiBase: "https://generativelanguage.googleapis.com/v1beta/openai", model: "gemini-2.0-flash" },
   custom: { apiBase: "", model: "" },
 };
 
