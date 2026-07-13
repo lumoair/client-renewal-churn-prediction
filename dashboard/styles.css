@@ -17,6 +17,8 @@
   --anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700;800;900&display=swap");
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -57,7 +59,7 @@ body {
   min-height: 100%;
   background: var(--bg);
   color: var(--text);
-  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: "Source Sans Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
