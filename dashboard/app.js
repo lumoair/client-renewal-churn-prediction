@@ -461,7 +461,7 @@ function drawRiskChart(rows) {
   const baseline = height - 42;
 
   ctx.fillStyle = "#888";
-  ctx.font = "12px system-ui, -apple-system, sans-serif";
+  ctx.font = "12px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif";
 
   items.forEach(([label, count, color], index) => {
     const x = startX + index * (barWidth + gap);
@@ -475,10 +475,10 @@ function drawRiskChart(rows) {
     ctx.stroke();
 
     ctx.fillStyle = "#0c0c0c";
-    ctx.font = "700 15px system-ui, -apple-system, sans-serif";
+    ctx.font = "700 15px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif";
     ctx.fillText(String(count), x + 38, y - 10);
     ctx.fillStyle = "#888";
-    ctx.font = "12px system-ui, -apple-system, sans-serif";
+    ctx.font = "12px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif";
     drawMultiline(ctx, label.replace("_", " "), x + 8, baseline + 18, 76, 14);
   });
 
@@ -518,7 +518,7 @@ function drawScatterChart(rows) {
 
     if (index < 6) {
       ctx.fillStyle = "#888";
-      ctx.font = "11px system-ui, -apple-system, sans-serif";
+      ctx.font = "11px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif";
       ctx.fillText(row.client_id, x - 18, y + radius + 14);
     }
   });
