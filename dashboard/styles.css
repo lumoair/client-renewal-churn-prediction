@@ -847,6 +847,13 @@ body.sidebar-collapsed .brand-mark {
   padding: 8px 10px;
 }
 
+.chat-config-select {
+  font-size: 0.8rem;
+  padding: 8px 10px;
+  appearance: auto;
+  cursor: pointer;
+}
+
 .chat-header {
   display: flex;
   align-items: center;

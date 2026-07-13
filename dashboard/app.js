@@ -677,6 +677,7 @@ const chatEls = {
   apiKey: document.getElementById("chatApiKey"),
   model: document.getElementById("chatModel"),
   apiBase: document.getElementById("chatApiBase"),
+  provider: document.getElementById("chatProvider"),
   badge: document.getElementById("chatModelBadge"),
 };
 
@@ -715,12 +716,31 @@ function clearChat() {
     </div>`;
 }
 
+const PROVIDERS = {
+  groq: { apiBase: "https://api.groq.com/openai/v1", model: "llama3-70b-8192" },
+  openai: { apiBase: "https://api.openai.com/v1", model: "gpt-4o-mini" },
+  custom: { apiBase: "", model: "" },
+};
+
 function getChatConfig() {
   return {
     apiKey: chatEls.apiKey.value.trim(),
-    model: chatEls.model.value.trim() || "gpt-4o-mini",
-    apiBaseUrl: chatEls.apiBase.value.trim() || "https://api.openai.com/v1",
+    model: chatEls.model.value.trim() || PROVIDERS[chatEls.provider.value]?.model || "llama3-70b-8192",
+    apiBaseUrl: chatEls.apiBase.value.trim() || PROVIDERS[chatEls.provider.value]?.apiBase || "https://api.groq.com/openai/v1",
   };
+}
+
+function applyProvider(provider) {
+  const info = PROVIDERS[provider];
+  if (!info || provider === "custom") return;
+  if (!chatEls.model.value.trim() || chatEls.model.dataset.lastProvider !== provider) {
+    chatEls.model.value = info.model;
+  }
+  if (!chatEls.apiBase.value.trim() || chatEls.apiBase.dataset.lastProvider !== provider) {
+    chatEls.apiBase.value = info.apiBase;
+  }
+  chatEls.model.dataset.lastProvider = provider;
+  chatEls.apiBase.dataset.lastProvider = provider;
 }
 
 function saveChatConfig() {
@@ -728,6 +748,7 @@ function saveChatConfig() {
   localStorage.setItem("chatApiKey", cfg.apiKey);
   localStorage.setItem("chatModel", cfg.model);
   localStorage.setItem("chatApiBase", cfg.apiBaseUrl);
+  localStorage.setItem("chatProvider", chatEls.provider.value);
   updateChatBadge(cfg.apiKey);
 }
 
@@ -746,17 +767,24 @@ function updateChatBadge(apiKey) {
 
 function loadChatConfig() {
   const key = localStorage.getItem("chatApiKey") || "";
-  const model = localStorage.getItem("chatModel") || "gpt-4o-mini";
-  const base = localStorage.getItem("chatApiBase") || "https://api.openai.com/v1";
+  const provider = localStorage.getItem("chatProvider") || "groq";
+  const model = localStorage.getItem("chatModel") || "";
+  const base = localStorage.getItem("chatApiBase") || "";
   if (chatEls.apiKey) chatEls.apiKey.value = key;
+  if (chatEls.provider) chatEls.provider.value = provider;
   if (chatEls.model) chatEls.model.value = model;
   if (chatEls.apiBase) chatEls.apiBase.value = base;
+  applyProvider(provider);
   updateChatBadge(key);
 }
 
 chatEls.apiKey.addEventListener("input", saveChatConfig);
 chatEls.model.addEventListener("input", saveChatConfig);
 chatEls.apiBase.addEventListener("input", saveChatConfig);
+chatEls.provider.addEventListener("change", () => {
+  applyProvider(chatEls.provider.value);
+  saveChatConfig();
+});
 
 async function sendMessage() {
   const text = chatEls.input.value.trim();
