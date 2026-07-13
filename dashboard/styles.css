@@ -281,8 +281,8 @@ body.sidebar-collapsed .sidebar-toggle {
 }
 
 .section-header h1 {
-  font-size: clamp(2rem, 3.5vw, 3.6rem);
-  max-width: 10ch;
+  font-size: clamp(1.5rem, 2.5vw, 2.6rem);
+  max-width: 16ch;
 }
 
 .section-action {
