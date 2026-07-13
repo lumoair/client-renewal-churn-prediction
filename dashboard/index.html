@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div id="captchaOverlay" class="captcha-overlay">
+      <div class="captcha-card">
+        <div class="captcha-icon">🔒</div>
+        <div class="captcha-title" data-i18n="captchaTitle">Security Check</div>
+        <div class="captcha-prompt" id="captchaPrompt">What is <span id="captchaA">3</span> + <span id="captchaB">7</span>?</div>
+        <input id="captchaInput" class="captcha-input" type="number" autofocus />
+        <button id="captchaSubmit" class="captcha-submit" type="button" data-i18n="captchaSubmit">Verify</button>
+        <div id="captchaError" class="captcha-error" data-i18n="captchaError">Incorrect, try again.</div>
+      </div>
+    </div>
     <div class="shell">
       <aside class="sidebar" id="sidebar">
         <button id="sidebarToggle" class="sidebar-toggle" type="button" data-i18n="navOverview" data-i18n-attr="title">

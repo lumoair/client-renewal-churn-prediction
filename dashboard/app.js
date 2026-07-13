@@ -120,6 +120,9 @@ const LOCALES = {
     healthWarn: "Moderate risk — monitor closely",
     healthBad: "High risk — intervene now",
     toggleLang: "العربية",
+    captchaTitle: "Security Check",
+    captchaSubmit: "Verify",
+    captchaError: "Incorrect, try again.",
   },
   ar: {
     lang: "ar-BH",
@@ -240,6 +243,9 @@ const LOCALES = {
     healthWarn: "مخاطر معتدلة — راقب عن كثب",
     healthBad: "مخاطر عالية — تدخل فوري",
     toggleLang: "English",
+    captchaTitle: "التحقق الأمني",
+    captchaSubmit: "تحقق",
+    captchaError: "إجابة خاطئة، حاول مرة أخرى.",
   },
 };
 
@@ -1336,3 +1342,38 @@ applyLang();
 loadChatConfig();
 if (!loadChatHistory()) clearChat(true);
 loadDefaultData();
+
+// CAPTCHA
+(function() {
+  const overlay = document.getElementById("captchaOverlay");
+  const input = document.getElementById("captchaInput");
+  const submit = document.getElementById("captchaSubmit");
+  const error = document.getElementById("captchaError");
+  const aEl = document.getElementById("captchaA");
+  const bEl = document.getElementById("captchaB");
+
+  let a, b, answer;
+
+  function gen() {
+    a = Math.floor(Math.random() * 20) + 1;
+    b = Math.floor(Math.random() * 20) + 1;
+    answer = a + b;
+    aEl.textContent = a;
+    bEl.textContent = b;
+    error.style.display = "none";
+    input.value = "";
+  }
+
+  function check() {
+    if (parseInt(input.value, 10) === answer) {
+      overlay.classList.add("hidden");
+    } else {
+      error.style.display = "block";
+      gen();
+    }
+  }
+
+  gen();
+  submit.addEventListener("click", check);
+  input.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+})();
