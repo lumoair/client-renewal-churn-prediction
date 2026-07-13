@@ -680,6 +680,7 @@ const chatEls = {
   messages: document.getElementById("chatMessages"),
   apiKey: document.getElementById("chatApiKey"),
   model: document.getElementById("chatModel"),
+  modelCustom: document.getElementById("chatModelCustom"),
   apiBase: document.getElementById("chatApiBase"),
   provider: document.getElementById("chatProvider"),
   badge: document.getElementById("chatModelBadge"),
@@ -768,19 +769,57 @@ const PROVIDERS = {
   custom: { apiBase: "", model: "" },
 };
 
+const PROVIDER_MODELS = {
+  groq: [
+    "llama3-70b-8192", "llama3-8b-8192", "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it",
+    "gemma-7b-it",
+  ],
+  openai: [
+    "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo",
+    "o1-mini",
+  ],
+  gemini: [
+    "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-2.5-pro-exp-03-25",
+    "gemini-1.5-flash", "gemini-1.5-pro",
+  ],
+};
+
+function populateModels(provider) {
+  const select = chatEls.model;
+  const customInput = chatEls.modelCustom;
+  const models = PROVIDER_MODELS[provider];
+
+  if (provider === "custom") {
+    select.style.display = "none";
+    customInput.style.display = "";
+    return;
+  }
+
+  select.style.display = "";
+  customInput.style.display = "none";
+  select.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join("");
+}
+
+function getModelValue() {
+  if (chatEls.provider.value === "custom") {
+    return chatEls.modelCustom.value.trim() || "llama3-70b-8192";
+  }
+  return chatEls.model.value || PROVIDERS[chatEls.provider.value]?.model || "llama3-70b-8192";
+}
+
 function getChatConfig() {
   return {
     apiKey: chatEls.apiKey.value.trim(),
-    model: chatEls.model.value.trim() || PROVIDERS[chatEls.provider.value]?.model || "llama3-70b-8192",
+    model: getModelValue(),
     apiBaseUrl: chatEls.apiBase.value.trim() || PROVIDERS[chatEls.provider.value]?.apiBase || "https://api.groq.com/openai/v1",
   };
 }
 
 function applyProvider(provider) {
-  const info = PROVIDERS[provider];
-  if (!info || provider === "custom") return;
-  chatEls.model.value = info.model;
-  chatEls.apiBase.value = info.apiBase;
+  populateModels(provider);
+  if (provider === "custom") return;
+  chatEls.apiBase.value = PROVIDERS[provider].apiBase;
 }
 
 function saveChatConfig() {
@@ -791,6 +830,9 @@ function saveChatConfig() {
   localStorage.setItem("chatProvider", chatEls.provider.value);
   updateChatBadge(cfg.apiKey);
 }
+
+chatEls.model.addEventListener("change", saveChatConfig);
+chatEls.modelCustom.addEventListener("input", saveChatConfig);
 
 function updateChatBadge(apiKey) {
   if (apiKey) {
@@ -812,9 +854,16 @@ function loadChatConfig() {
   const base = localStorage.getItem("chatApiBase") || "";
   if (chatEls.apiKey) chatEls.apiKey.value = key;
   if (chatEls.provider) chatEls.provider.value = provider;
-  if (chatEls.model) chatEls.model.value = model;
-  if (chatEls.apiBase) chatEls.apiBase.value = base;
-  applyProvider(provider);
+  populateModels(provider);
+  if (provider === "custom") {
+    chatEls.modelCustom.value = model;
+  } else {
+    if (model && [...chatEls.model.options].some(o => o.value === model)) {
+      chatEls.model.value = model;
+    }
+  }
+  chatEls.apiBase.value = base || PROVIDERS[provider]?.apiBase || "";
+  saveChatConfig();
   updateChatBadge(key);
 }
 

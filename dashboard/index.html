@@ -326,7 +326,8 @@
             <option value="gemini">Gemini</option>
             <option value="custom">Custom</option>
           </select>
-          <input id="chatModel" class="chat-input chat-config-half" type="text" placeholder="Model (e.g. llama3-70b-8192)" />
+          <select id="chatModel" class="chat-input chat-config-half chat-select"></select>
+          <input id="chatModelCustom" class="chat-input chat-config-half" type="text" placeholder="Custom model name" style="display:none" />
         </div>
         <input id="chatApiBase" class="chat-input chat-config-input" type="text" placeholder="API Base URL (auto-filled for Groq/OpenAI)" />
       </div>
