@@ -8,8 +8,8 @@
     "generate-data": "node src/generate-sample-data.js",
     "train": "node src/train.js",
     "dashboard": "node src/serve-dashboard.js",
-    "start": "electron .",
-    "start:web": "node src/serve-dashboard.js"
+    "start": "node src/serve-dashboard.js",
+    "start:electron": "electron ."
   },
   "dependencies": {
     "csv-parse": "^5.6.0",
