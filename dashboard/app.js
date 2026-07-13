@@ -688,7 +688,9 @@ const chatEls = {
 let chatHistory = [];
 
 function addMessage(role, text, save) {
-  chatHistory.push({role, content: text});
+  if (save !== false) {
+    chatHistory.push({role, content: text});
+  }
   const div = document.createElement("div");
   div.className = `chat-message ${role}`;
   div.innerHTML = `<div class="chat-bubble">${text}</div>`;
