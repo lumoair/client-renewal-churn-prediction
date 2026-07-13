@@ -287,8 +287,7 @@ function applyLang() {
 
 function toggleLang() {
   currentLang = currentLang === "ar" ? "en" : "ar";
-document.getElementById("langToggle")?.addEventListener("click", toggleLang);
-applyLang();
+  applyLang();
   if (typeof updateUI === "function") updateUI();
 }
 
@@ -935,6 +934,7 @@ els.csvInput.addEventListener("change", async (event) => {
   updateUI();
 });
 
+document.getElementById("langToggle")?.addEventListener("click", toggleLang);
 els.sidebarToggle.addEventListener("click", toggleNavigation);
 els.sidebarToggleTop.addEventListener("click", toggleNavigation);
 
