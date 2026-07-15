@@ -4,6 +4,7 @@ import {stringify} from "csv-stringify/sync";
 
 const IDENTIFIER_COLUMNS = new Set(["client_id", "as_of_date", "renewal_date"]);
 const TARGET_COLUMNS = new Set(["churned", "renewed"]);
+const DEFAULT_INPUT = "data/client_renewal_data.csv";
 
 function sigmoid(z) {
   return 1 / (1 + Math.exp(-z));
@@ -480,12 +481,12 @@ function recommendAction(segment) {
 function main() {
   const args = process.argv.slice(2);
   const inputIdx = args.indexOf("--input");
-  const input = inputIdx >= 0 ? args[inputIdx + 1] : null;
+  const input = inputIdx >= 0 ? args[inputIdx + 1] : DEFAULT_INPUT;
   const outputDirIdx = args.indexOf("--output-dir");
   const outputDir = outputDirIdx >= 0 ? args[outputDirIdx + 1] : "outputs";
 
   if (!input) {
-    console.error("Usage: node src/train.js --input <csv> [--output-dir <dir>]");
+    console.error(`Usage: node src/train.js [--input <csv>] [--output-dir <dir>]\nDefault input: ${DEFAULT_INPUT}`);
     process.exit(1);
   }
 

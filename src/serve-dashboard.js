@@ -273,6 +273,17 @@ async function doProviderChat(messages, model, apiKey, apiBaseUrl, res, attempt)
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.PORT ? "0.0.0.0" : "127.0.0.1";
 
+server.on("error", (err) => {
+  if (err && err.code === "EADDRINUSE") {
+    console.error(`Port ${PORT} is already in use on ${HOST}.`);
+  } else if (err && err.code === "EPERM") {
+    console.error(`Cannot bind dashboard server to ${HOST}:${PORT}.`);
+  } else {
+    console.error("Dashboard server failed to start.", err);
+  }
+  process.exit(1);
+});
+
 server.listen(PORT, HOST, () => {
   console.log(`Serving dashboard at http://${HOST}:${PORT}/dashboard/`);
 });
